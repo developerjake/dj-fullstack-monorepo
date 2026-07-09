@@ -1,0 +1,55 @@
+.app {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  text-align: left;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.lede {
+  margin: 0.75rem 0 1.5rem;
+  color: #aaa;
+}
+
+.api-status {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: #f0f0f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+}
+
+.api-status--ok {
+  border-color: #2f6f4e;
+}
+
+.api-status--error {
+  border-color: #8a3b3b;
+}
+
+.api-status--loading {
+  border-color: #555;
+}
+
+@media (prefers-color-scheme: light) {
+  .eyebrow,
+  .lede {
+    color: #666;
+  }
+
+  .api-status {
+    background: #f5f5f5;
+    border-color: #ddd;
+    color: #1a1a1a;
+  }
+}

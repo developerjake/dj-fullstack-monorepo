@@ -1,0 +1,46 @@
+{
+  "name": "fullstack-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": ">=24 <25",
+    "pnpm": ">=10.13.1 <11"
+  },
+  "scripts": {
+    "dev": "docker compose -f docker-compose.dev.yml up --build",
+    "dev:watch": "docker compose -f docker-compose.dev.yml up --build --watch",
+    "dev:detached": "docker compose -f docker-compose.dev.yml up --build --detach && docker compose -f docker-compose.dev.yml logs -f --tail=100",
+    "dev:watch:detached": "docker compose -f docker-compose.dev.yml up --build --watch --detach && docker compose -f docker-compose.dev.yml logs -f --tail=100",
+    "dev:down": "docker compose -f docker-compose.dev.yml down",
+    "bootstrap": "pnpm install && pnpm run build",
+    "build": "turbo run build",
+    "backend:dev": "turbo run start:dev --filter=backend",
+    "backend:build": "turbo run build --filter=backend",
+    "backend:test": "turbo run test --filter=backend",
+    "backend:test:e2e": "turbo run test:e2e --filter=backend",
+    "backend:lint": "turbo run lint --filter=backend",
+    "backend:typecheck": "turbo run typecheck --filter=backend",
+    "frontend:dev": "turbo run dev --filter=frontend",
+    "frontend:build": "turbo run build --filter=frontend",
+    "storybook:build": "turbo run build-storybook --filter=frontend",
+    "storybook": "turbo run storybook --filter=frontend",
+    "frontend:test": "turbo run test --filter=frontend",
+    "frontend:lint": "turbo run lint --filter=frontend",
+    "frontend:typecheck": "turbo run typecheck --filter=frontend",
+    "lint": "turbo run lint",
+    "lint:ci": "turbo run lint:ci",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.16",
+    "turbo": "2.9.6",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.4"
+  }
+}

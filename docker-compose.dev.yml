@@ -1,0 +1,96 @@
+# `docker compose up --watch` runs actions listed under develop.watch.
+# Dependency files trigger an image rebuild (matches Dockerfile.dev).
+# *.ts / *.tsx under app src (and backend test) also trigger rebuild;
+# Source is still bind-mounted; nest --watch / vite can reload without a rebuild.
+x-backend-watch: &backend-watch
+  watch:
+    - action: rebuild
+      path: ./.npmrc
+    - action: rebuild
+      path: ./package.json
+    - action: rebuild
+      path: ./pnpm-lock.yaml
+    - action: rebuild
+      path: ./pnpm-workspace.yaml
+    - action: rebuild
+      path: ./turbo.json
+    - action: rebuild
+      path: ./apps/backend/package.json
+    - action: rebuild
+      path: ./apps/frontend/package.json
+    - action: rebuild
+      path: ./apps/backend/src
+      include:
+        - '*.ts'
+        - '*.tsx'
+    - action: rebuild
+      path: ./apps/backend/test
+      include:
+        - '*.ts'
+        - '*.tsx'
+
+x-frontend-watch: &frontend-watch
+  watch:
+    - action: rebuild
+      path: ./.npmrc
+    - action: rebuild
+      path: ./package.json
+    - action: rebuild
+      path: ./pnpm-lock.yaml
+    - action: rebuild
+      path: ./pnpm-workspace.yaml
+    - action: rebuild
+      path: ./turbo.json
+    - action: rebuild
+      path: ./apps/backend/package.json
+    - action: rebuild
+      path: ./apps/frontend/package.json
+    - action: rebuild
+      path: ./apps/frontend/src
+      include:
+        - '*.ts'
+        - '*.tsx'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /app
+    ports:
+      - '3001:3000'
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./apps/backend/src:/app/apps/backend/src
+      - ./apps/backend/test:/app/apps/backend/test
+      - ./apps/backend/tsconfig.json:/app/apps/backend/tsconfig.json
+      - ./apps/backend/tsconfig.build.json:/app/apps/backend/tsconfig.build.json
+      - ./apps/backend/nest-cli.json:/app/apps/backend/nest-cli.json
+    command: pnpm backend:dev
+    restart: unless-stopped
+    env_file:
+      - ./apps/backend/.env
+    develop:
+      <<: *backend-watch
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /app
+    ports:
+      - '3000:5173'
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./apps/frontend/src:/app/apps/frontend/src
+      - ./apps/frontend/public:/app/apps/frontend/public
+      - ./apps/frontend/index.html:/app/apps/frontend/index.html
+      - ./apps/frontend/vite.config.ts:/app/apps/frontend/vite.config.ts
+    command: pnpm frontend:dev -- --host 0.0.0.0
+    depends_on:
+      - backend
+    restart: unless-stopped
+    develop:
+      <<: *frontend-watch
